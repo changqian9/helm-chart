@@ -21,10 +21,11 @@ airflow:
   ## Extra environment variables to mount in the web, scheduler, and worker pods:
   extraEnv:
   #  - name: AIRFLOW__CORE__FERNET_KEY
-  #    valueFrom:
-  #      secretKeyRef:
-  #        name: airflow
-  #        key: fernet_key
+    - name: AIRFLOW_FERNET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: airflow
+          key: fernet_key
   #  - name: AIRFLOW__LDAP__BIND_PASSWORD
   #    valueFrom:
   #      secretKeyRef:
@@ -37,7 +38,7 @@ airflow:
   ## Generate fernetKey with:
   ##    python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
   ## fernetKey: ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD
-  fernetKey: ""
+  fernetKey: "7TTFhuHqFvdX0pvo4PjyNpTuX_Wgg_phZHLJII1ls8o="
   service:
     annotations: {}
     type: ClusterIP
@@ -60,10 +61,10 @@ airflow:
   image:
     ##
     ## docker-airflow image
-    repository: puckel/docker-airflow
+    repository: hsbj/docker-airflow
     ##
     ## image tag
-    tag: 1.10.3
+    tag: 1.10.4
     ##
     ## Image pull policy
     ## values: Always or IfNotPresent
@@ -438,15 +439,15 @@ dags:
   git:
     ##
     ## url to clone the git repository
-    url:
+    url: git@github.com:changqian9/hes-dags.git
     ##
     ## branch name, tag or sha1 to reset to
     ref: master
     ## pre-created secret with key, key.pub and known_hosts file for private repos
-    secret: {}
+    secret: hotstar-github-secret
   initContainer:
     ## Fetch the source code when the pods starts
-    enabled: false
+    enabled: true
     ## Image for the init container (any image with git will do)
     image:
       ## docker-airflow image
@@ -455,7 +456,7 @@ dags:
       tag: 1.0.7
       ## Image pull policy
       ## values: Always or IfNotPresent
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     ## install requirements.txt dependencies automatically
     installRequirements: true
 
@@ -489,7 +490,7 @@ postgresql:
   ##
   ## Use the PostgreSQL chart dependency.
   ## Set to false if bringing your own PostgreSQL.
-  enabled: true
+  enabled: false
 
   ##
   ## The name of an existing secret that contains the postgres password.
@@ -501,7 +502,7 @@ postgresql:
   ##
   ## If you are bringing your own PostgreSQL, you should set postgresHost and
   ## also probably service.port, postgresUser, postgresPassword, and postgresDatabase
-  ## postgresHost:
+  postgresHost: 192.168.10.185
   ##
   ## PostgreSQL port
   service:
@@ -524,7 +525,7 @@ postgresql:
     enabled: true
     ##
     ## Persistant class
-    # storageClass: classname
+    storageClass: manual
     ##
     ## Access mode:
     accessMode: ReadWriteOnce
