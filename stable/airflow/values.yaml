@@ -46,7 +46,7 @@ airflow:
   ##
   ## The executor to use.
   ##
-  executor: Celery
+  executor: Kubernetes
   ##
   ## set the max number of retries during container initialization
   initRetryLoop:
