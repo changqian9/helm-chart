@@ -103,7 +103,13 @@ airflow:
   ##   config:
   ##     AIRFLOW__CORE__EXPOSE_CONFIG: "True"
   ##     HTTP_PROXY: "http://proxy.mycompany.com:123"
-  config: {}
+  config: 
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: hsbj/docker-airflow
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: 1.10.4
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE_PULL_POLICY: Never
+    AIRFLOW__KUBERNETES__WORKER_SERVICE_ACCOUNT_NAME: airflow
+    AIRFLOW__KUBERNETES__DAGS_VOLUME_HOST: /large/dags
+    AIRFLOW__KUBERNETES__NAMESPACE: airflow
   ##
   ## Configure pod disruption budget for the scheduler
   podDisruptionBudget:
@@ -537,7 +543,7 @@ redis:
   ##
   ## Use the redis chart dependency.
   ## Set to false if bringing your own redis.
-  enabled: true
+  enabled: false
 
   ##
   ## The name of an existing secret that contains the redis password.
@@ -548,7 +554,9 @@ redis:
 
   ##
   ## If you are bringing your own redis, you can set the host in redisHost.
-  ## redisHost:
+  redisHost: 192.168.10.185
+  service:
+    port: 6379
   ##
   ## Redis password
   ##
@@ -570,7 +578,7 @@ redis:
       enabled: false
       ##
       ## Persistant class
-      # storageClass: classname
+      ## storageClass: manual
       ##
       ## Access mode:
       accessMode: ReadWriteOnce
